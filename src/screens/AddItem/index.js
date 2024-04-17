@@ -59,7 +59,13 @@ const AddItemScreen = props => {
             />
         </View>
         <View style={styles.bottomContainer}>
-            <Pressable style={styles.button} onPress={onItemAdd}>
+            <Pressable 
+                accessible={true}
+                accessibilityRole='button'
+                accessibilityLabel='Double tap to add an item'
+                accessibilityHint='Adds an item'
+                style={styles.button} 
+                onPress={onItemAdd}>
                 <Text style={styles.buttonText}>Add</Text>
             </Pressable>
         </View>

@@ -60,11 +60,13 @@ const AddListScreen = props => {
     <View style={styles.container}>
         <View style={styles.topContainer}>
             <TextInput 
+                accessible={true}
+                accessibilityLabel='Please enter a shopping list name'
                 value={name}
                 onChangeText={value => setName(value)}
                 style={styles.name}
-                placeholder={'Enter Name'}
-                placeholderTextColor={'grey'}
+                // placeholder={'Enter Name'}
+                // placeholderTextColor={'grey'}
             />
             <TextInput 
                 value={store}
@@ -104,7 +106,12 @@ const AddListScreen = props => {
             )}
             {!datePicker && (
                 <View>
-                    <Pressable onPress={showDatePicker} style={styles.dateButton}>
+                    <Pressable 
+                        accessibilityRole='button'
+                        accessibilityLabel='Double tap to open date picker'
+                        accessibilityHint='Opens date picker'
+                        onPress={showDatePicker} 
+                        style={styles.dateButton}>
                         <Text style={styles.dateButtonText}>Select A Date</Text>
                     </Pressable>
                 </View>
@@ -117,7 +124,13 @@ const AddListScreen = props => {
             />
         </View>
         <View style={styles.bottomContainer}>
-            <Pressable style={styles.button} onPress={onListAdd}>
+            <Pressable 
+                accessible={true}
+                accessibilityRole='button'
+                accessibilityLabel='Double tap to add a list'
+                accessibilityHint='Adds a list'
+                style={styles.button} 
+                onPress={onListAdd}>
                 <Text style={styles.buttonText}>Add</Text>
             </Pressable>
         </View>

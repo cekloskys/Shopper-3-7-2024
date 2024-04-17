@@ -3,6 +3,7 @@ import styles from './styles';
 import { View, Text, TextInput, Pressable, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import SelectDropdown from 'react-native-select-dropdown';
+import { useNavigation } from '@react-navigation/native';
 // import openDatabase hook
 import { openDatabase } from "react-native-sqlite-storage";
 
@@ -11,6 +12,7 @@ const shopperDB = openDatabase({name: 'Shopper.db'});
 
 // create constant that contains the name of the lists table
 const listsTableName = 'lists';
+const listItemsTableName = 'list_items';
 
 const ExistingListScreen = props => {
 
@@ -27,6 +29,8 @@ const ExistingListScreen = props => {
 
     const [datePicker, setDatePicker] = useState(false);
     const [selectedDate, setSelectedDate] = useState(post.date);
+
+    const navigation = useNavigation();
 
     function showDatePicker() {
         setDatePicker(true);
@@ -55,7 +59,7 @@ const ExistingListScreen = props => {
             alert('Please select a shopping list date.');
             return;
         }
-        console.log(date);
+        
         shopperDB.transaction(txn => {
             txn.executeSql(
                 `UPDATE ${listsTableName} 
@@ -100,6 +104,18 @@ const ExistingListScreen = props => {
                                 }
                             );
                         });
+                        shopperDB.transaction(txn => {
+                            txn.executeSql(
+                                `DELETE FROM ${listItemsTableName} WHERE list_id = ${post.id}`,
+                                [],
+                                () => {
+                                    console.log(`${name} deleted successfully.`);
+                                },
+                                error => {
+                                    console.log('Error on deleting list ' + error.message);
+                                }
+                            );
+                        });
                         alert('List Deleted!');
                     },
                 },
@@ -111,11 +127,11 @@ const ExistingListScreen = props => {
     }
 
     const onAddItem = () => {
-        
+        navigation.navigate('Add List Item', {post: post});
     }
 
     const onViewItems = () => {
-        
+        navigation.navigate('View List Items', {post: post});
     }
 
   return (
@@ -166,12 +182,21 @@ const ExistingListScreen = props => {
             )}
             {!datePicker && (
                 <View>
-                    <Pressable onPress={showDatePicker} style={styles.dateButton}>
+                    <Pressable 
+                        accessible={true}
+                        accessibilityRole='button'
+                        accessibilityLabel='Double tap to open date picker'
+                        accessibilityHint='Opens date picker'
+                        onPress={showDatePicker} 
+                        style={styles.dateButton}
+                    >
                         <Text style={styles.dateButtonText}>Select A Date</Text>
                     </Pressable>
                 </View>
             )}
-            <TextInput 
+            <TextInput
+                accessible={true}
+                accessibilityLabel={selectedDate}
                 style={styles.date}
                 placeholder={"Selected Date"}
                 value={selectedDate}
@@ -179,16 +204,42 @@ const ExistingListScreen = props => {
             />
         </View>
         <View style={styles.bottomContainer}>
-            <Pressable style={styles.updateButton} onPress={onListUpdate}>
+            <Pressable 
+                accessible={true}
+                accessibilityRole='button'
+                accessibilityLabel='Double tap to update list'
+                style={styles.updateButton} 
+                onPress={onListUpdate}
+            >
                 <Text style={styles.buttonText}>Update</Text>
             </Pressable>
-            <Pressable style={styles.deleteButton} onPress={onListDelete}>
+            <Pressable 
+                accessible={true}
+                accessibilityRole='button'
+                accessibilityLabel='Double tap to delete list'
+                style={styles.deleteButton} 
+                onPress={onListDelete}
+            >
                 <Text style={styles.buttonText}>Delete</Text>
             </Pressable>
-            <Pressable style={styles.addButton} onPress={onAddItem}>
+            <Pressable 
+                accessible={true}
+                accessibilityRole='button'
+                accessibilityLabel='Double tap to add an item to this list'
+                accessibilityHint='Opens add item screen'
+                style={styles.addButton} 
+                onPress={onAddItem}
+            >
                 <Text style={styles.buttonText}>Add Item</Text>
             </Pressable>
-            <Pressable style={styles.viewButton} onPress={onViewItems}>
+            <Pressable 
+                accessible={true}
+                accessibilityRole='button'
+                accessibilityLabel='Double tap to view items added to this list'
+                accessibilityHint='Opens view items screen'
+                style={styles.viewButton} 
+                onPress={onViewItems}
+            >
                 <Text style={styles.buttonText}>View Items</Text>
             </Pressable>
         </View>

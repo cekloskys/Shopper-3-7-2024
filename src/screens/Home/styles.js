@@ -8,7 +8,9 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   header: {
-    margin: 10,
+    top: 10,
+    padding: 15,
+    width: '100%',
   },
   description: {
     fontSize: 20,
@@ -32,7 +34,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 60,
     position: 'absolute',
-    bottom: 30,
+    bottom: 60,
   },
   button: {
     backgroundColor: 'black',
