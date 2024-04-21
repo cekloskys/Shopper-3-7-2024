@@ -10,6 +10,7 @@ import type {Node} from 'react';
 import Router from './src/navigation/Router';
 import bcrypt from 'react-native-bcrypt';
 import { openDatabase } from 'react-native-sqlite-storage';
+import { LogBox } from 'react-native';
 
 const database = require('./src/components/Handlers/database.js');
 
@@ -50,5 +51,5 @@ const App: () => Node = () => {
   // }
   return <Router />;
 };
-
+LogBox.ignoreLogs(['Math.random']);
 export default App;

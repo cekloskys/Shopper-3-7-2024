@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import {View, Text, Pressable, SafeAreaView, TextInput, TouchableOpacity, Alert} from 'react-native';
+import {View, Text, Pressable, SafeAreaView, BackHandler, TextInput, TouchableOpacity, Alert} from 'react-native';
 import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { openDatabase } from 'react-native-sqlite-storage';
 import bcrypt from 'react-native-bcrypt';
+import database from '../../components/Handlers/database';
 
 // create constant object that refers to database
 const shopperDB = openDatabase({name: 'Shopper.db'});
@@ -12,7 +13,7 @@ const shopperDB = openDatabase({name: 'Shopper.db'});
 // create constant that contains the name of the users tables
 const usersTableName = 'users';
 
-const HomeScreen = () => {
+const SignUpScreen = () => {
 
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
@@ -34,19 +35,14 @@ const HomeScreen = () => {
         [],
         (_, res) => {
           let user = res.rows.length;
-          if (user == 0){
-            Alert.alert('Invalid User', 'Username is invalid!');
+          if (user >= 1){
+            Alert.alert('Invalid User', 'Username already exists!');
             return;
           } else {
-            let item = res.rows.item(0);
-            let isPasswordCorrect = bcrypt.compareSync(password, item.password);
-            if (!isPasswordCorrect) {
-              Alert.alert('Invalid User', 'Username and password are invalid!');
-              return;
-            }
-            if (user != 0 && isPasswordCorrect) {
-              navigation.navigate('Start Shopping!');
-            }
+            let salt = bcrypt.genSaltSync(10);
+            let hash = bcrypt.hashSync(password, salt);
+            database.addUser(username, hash);
+            navigation.navigate('Home');
           }
         },
         error => {
@@ -115,22 +111,13 @@ const HomeScreen = () => {
       </View>
       <View style={styles.bottom}>
         <Pressable
-          accessible={true}
-          accessibilityRole='button'
-          accessibilityLabel='Double tap to start shopping'
-          accessibilityHint='Goes to lists screens'
           style={styles.button}
           onPress={() => onSubmit()}>
-          <Text style={styles.buttonText}>Sign In</Text>
-        </Pressable>
-        <Pressable
-          style={styles.button}
-          onPress={() => navigation.navigate('Sign Up')}>
-            <Text style={styles.buttonText}>Sign Up</Text>
+          <Text style={styles.buttonText}>Sign Up</Text>
         </Pressable>
       </View>
     </View>
   );
 };
 
-export default HomeScreen;
+export default SignUpScreen;
